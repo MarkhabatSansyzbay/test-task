@@ -27,7 +27,10 @@ type App struct {
 func (a *App) CreateUser(user *models.User, reply *string) error {
 	coll := a.client.Database("taskDB").Collection("users")
 	doc := bson.D{{"email", user.Email}, {"salt", user.Salt}, {"password", user.Password}}
-	_, err := coll.InsertOne(context.TODO(), doc)
+
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	_, err := coll.InsertOne(ctx, doc)
 	if err != nil {
 		return err
 	}
